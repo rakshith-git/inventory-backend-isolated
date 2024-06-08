@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import { apiError } from "./utils/apiError.js";
 const app = express();
 
-app.use(cors({ origin: ["https://inventory-management-82e5f.web.app", "https://inventory-management-system-te1i.onrender.com"], credentials: true }));
+app.use(cors({ origin: process.env.CORS_ORIGIN || "*", credentials: true }));
 app.use(express.json({ limit: "50kb" }));
 app.use(cookieParser());
 app.set('trust proxy', 1);
