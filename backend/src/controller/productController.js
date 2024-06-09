@@ -7,12 +7,14 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 
 const addProduct = asyncHandler(async (req, res) => {
-  const { productId, productName, units, salePrice, purchasePrice, minimumQuantity } = req.body;
+  const { productId, productName, units, salePrice, purchasePrice, minimumQuantity, category } = req.body;
 
   if (
-    [productId, productName, units, salePrice, purchasePrice, minimumQuantity].some(
-      (field) => field?.toString().trim() === "",
-    )
+    [productId, productName, units, salePrice, purchasePrice, minimumQuantity, category].some(
+      (field) => field.toString().trim() === "",
+    ) ||
+    [productId, productName, units, salePrice, purchasePrice, minimumQuantity, category].some(
+      (field) => !field)
   ) {
     throw new apiError(400, "all fields are required");
   }
@@ -21,11 +23,12 @@ const addProduct = asyncHandler(async (req, res) => {
   if (productExists) {
     throw new apiError(409, "product with that id or name already exists");
   }
-  const product = await Product.create({ productId, productName, units, salePrice, purchasePrice, minimumQuantity });
+  const product = await Product.create({ productId, productName, units, salePrice, purchasePrice, minimumQuantity, category });
   const createdProduct = await Product.findById(product._id);
   return res.status(201).json(new ApiResponse(201, createdProduct, "product added successfully"));
 
 })
+
 const getProduct = asyncHandler(async (req, res) => {
   const { id } = req.body
   if (id.toString().trim() === "")
@@ -37,6 +40,7 @@ const getProduct = asyncHandler(async (req, res) => {
 
   return res.status(200).json(new ApiResponse(200, product, "product fetched successfully"));
 })
+
 const getAllProducts = asyncHandler(async (_, res) => {
   try {
     const products = await Product.find();
@@ -46,4 +50,5 @@ const getAllProducts = asyncHandler(async (_, res) => {
     throw new apiError(500, "something went wrong while fetching products");
   }
 });
+
 export { addProduct, getProduct, getAllProducts };

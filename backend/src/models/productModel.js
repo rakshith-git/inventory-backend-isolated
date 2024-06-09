@@ -34,6 +34,8 @@ const productSchema = new Schema(
       default: priceObj,
     },
 
+    location: { type: String },
+    category: { type: String, required: true },
     minimumQuantity: { type: Number, default: 0 },
     lowOnStock: { type: Boolean, default: false },
 
