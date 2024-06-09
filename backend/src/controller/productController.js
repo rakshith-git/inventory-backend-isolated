@@ -26,6 +26,17 @@ const addProduct = asyncHandler(async (req, res) => {
   return res.status(201).json(new ApiResponse(201, createdProduct, "product added successfully"));
 
 })
+const getProduct = asyncHandler(async (req, res) => {
+  const { id } = req.body
+  if (id.toString().trim() === "")
+    throw new apiError(400, "id required");
+  const product = await Product.findById(id);
+
+  if (!product)
+    throw new apiError(404, "product not found");
+
+  return res.status(200).json(new ApiResponse(200, product, "product fetched successfully"));
+})
 const getAllProducts = asyncHandler(async (_, res) => {
   try {
     const products = await Product.find();
@@ -35,4 +46,4 @@ const getAllProducts = asyncHandler(async (_, res) => {
     throw new apiError(500, "something went wrong while fetching products");
   }
 });
-export { addProduct, getAllProducts };
+export { addProduct, getProduct, getAllProducts };
