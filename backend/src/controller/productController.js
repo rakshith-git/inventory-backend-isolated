@@ -8,20 +8,20 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 const addProduct = asyncHandler(async (req, res) => {
   // Define the expected fields
-  const expectedFields = ['productId', 'productName', 'units', 'salePrice', 'purchasePrice', 'minimumQuantity', 'category'];
+  const expectedFields = ['productId', 'productName', 'units', 'salePrice', 'purchasePrice', 'productImageURL', 'minimumQuantity', 'category'];
 
   // Check if all expected fields are present in the request body
   if (!expectedFields.every(field => Object.keys(req.body).includes(field))) {
     throw new apiError(400, "All fields are required");
   }
 
-  const { productId, productName, units, salePrice, purchasePrice, minimumQuantity, category } = req.body;
+  const { productId, productName, units, salePrice, productImageURL, purchasePrice, minimumQuantity, category } = req.body;
 
   const productExists = await Product.findOne({ $or: [{ productId }, { productName }] });
   if (productExists) {
     throw new apiError(409, "Product with that id or name already exists");
   }
-  const product = await Product.create({ productId, productName, units, salePrice, purchasePrice, minimumQuantity, category });
+  const product = await Product.create({ productId, productName, units, productImageURL, salePrice, purchasePrice, minimumQuantity, category });
   const createdProduct = await Product.findById(product._id);
   return res.status(201).json(new ApiResponse(201, createdProduct, "Product added successfully"));
 });
@@ -45,7 +45,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     throw new apiError(400, "All fields are required");
   }
 
-  const { _id, productId, productName, units, salePrice, purchasePrice, minimumQuantity, category } = req.body;
+  const { _id, productId, productName, productImageURL, units, salePrice, purchasePrice, minimumQuantity, category } = req.body;
 
   const product = await Product.findById(_id);
   if (!product) {
@@ -56,6 +56,7 @@ const updateProduct = asyncHandler(async (req, res) => {
   const updatedProduct = await product.updateOne({
     $set: {
       productId,
+      productImageURL,
       productName,
       units,
       salePrice,
