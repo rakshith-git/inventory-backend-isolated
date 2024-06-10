@@ -76,6 +76,27 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 });
 
+
+const getLowProducts = asyncHandler(async (_, res) => {
+  try {
+    // Using the aggregation framework to find products with units less than minimumQuantity
+    const products = await Product.aggregate([
+      {
+        $match: {
+          $expr: {
+            $lt: ["$units", "$minimumQuantity"]
+          }
+        }
+      }
+    ]);
+
+    return res.status(200).json(new ApiResponse(200, products, "Products fetched successfully"));
+  } catch (error) {
+    throw new apiError(500, "Something went wrong while fetching low stock products");
+  }
+});
+
+
 const deleteProduct = asyncHandler(async (req, res) => {
   const { _id } = req.body
   if (_id.toString().trim() === "")
@@ -94,4 +115,4 @@ const getAllProducts = asyncHandler(async (_, res) => {
   }
 });
 
-export { updateProduct, addProduct, getProduct, getAllProducts, deleteProduct };
+export { getLowProducts, updateProduct, addProduct, getProduct, getAllProducts, deleteProduct };
