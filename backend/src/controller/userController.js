@@ -4,6 +4,7 @@ import { apiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
+// TODO: create logs logic and add logs 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -36,7 +37,8 @@ const registerUser = asyncHandler(async (req, res) => {
     user._id,
   );
 
-  const options = { httpOnly: true, secure: false,sameSite: 'none', };
+
+  const options = { httpOnly: true, secure: false, sameSite: 'none', };
   return res
     .status(201)
     .cookie("accessToken", accessToken, options)
