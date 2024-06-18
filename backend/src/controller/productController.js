@@ -27,7 +27,7 @@ const addProduct = asyncHandler(async (req, res) => {
 });
 
 const getProduct = asyncHandler(async (req, res) => {
-  const { id } = req.body
+  const { id } = req.params;
   if (id.toString().trim() === "")
     throw new apiError(400, "id required");
   const product = await Product.findById(id);
