@@ -38,7 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
   );
 
 
-  const options = { httpOnly: true, secure: false, sameSite: 'none', };
+  const options = { httpOnly: true, secure: false, sameSite: 'none',expires: new Date('Thu, 18 Jan 2049 00:00:00 GMT'), };
   return res
     .status(201)
     .cookie("accessToken", accessToken, options)
