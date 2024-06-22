@@ -38,7 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
   );
 
 
-  const options = { httpOnly: true, secure: false, sameSite: 'none', };
+  const options = { httpOnly: true, secure: false, sameSite: 'none', expiry: new Date(Date.now() + 15 * 60 * 1000) };
   return res
     .status(201)
     .cookie("accessToken", accessToken, options)
@@ -67,7 +67,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const loggedUser = await User.findById(user._id).select(
     "-password -refreshToken",
   );
-  const options = { httpOnly: true, secure: true };
+  const options = { httpOnly: true, secure: false, sameSite: 'none', expiry: new Date(Date.now() + 15 * 60 * 1000) };
 
   return res
     .status(200)
@@ -82,7 +82,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     { $set: { refreshToken: null } },
     { new: true },
   );
-  const options = { httpOnly: true, secure: true };
+  const options = { httpOnly: true, secure: false, sameSite: 'none', expiry: new Date(Date.now() + 15 * 60 * 1000) };
   res
     .status(200)
     .clearCookie("accessToken", options)
@@ -99,7 +99,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   );
   const user = await User.findById(decodedToken._id);
   if (!user) throw new apiError(401, "Unauthorized request");
-  const options = { httpOnly: true, secure: true };
+  const options = { httpOnly: true, secure: false, sameSite: 'none', expiry: new Date(Date.now() + 15 * 60 * 1000) };
   if (imcomingRefreshToken !== user.refreshToken)
     throw new apiError(401, "refresh token expired");
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(

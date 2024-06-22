@@ -98,7 +98,7 @@ const getLowProducts = asyncHandler(async (_, res) => {
 
 
 const deleteProduct = asyncHandler(async (req, res) => {
-  const { _id } = req.body
+  const { _id } = req.params
   if (_id.toString().trim() === "")
     throw new apiError(400, "id required");
   const product = await Product.findByIdAndDelete(_id);
